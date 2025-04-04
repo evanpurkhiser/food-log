@@ -6,10 +6,22 @@ const client = new OpenAI({
 });
 
 const PROMPT = `
-The following photos and associated metadata are what I ate in the past 24
-hours. Please analyise the photos and produce strucuted JSON output.
+You are my personal meal cageorizeer and analyst. Your objective is to
+categorize the given photos of food I ate in the past 24 hours. 
 
-Each date time is associated to the photos in their respective order.
+## RULES
+
+ - Each date time is associated to the photos in their respective order.
+
+ - Within the day there should almost always be a lunch and dinner. Remember to
+   use the timestamps to help inform this category decision. Even if
+   the type of food is typically lunch, if it's eaten at dinner time then
+   categorize it as dinner.
+
+ - In some scenarios if two photos are taken within minutes of each other and
+   appear to be at the same place you should combine those into a single Meal
+   result.
+
 `;
 
 const categories: FoodCategory[] = [
@@ -25,7 +37,7 @@ const categories: FoodCategory[] = [
 
 const SCHEMA = {
   type: 'json_schema',
-  name: 'food_details',
+  name: 'meals',
   schema: {
     $defs: {
       Meal: {
@@ -64,7 +76,7 @@ const SCHEMA = {
             type: 'string',
           },
         },
-        required: ['category', 'cusine_type', 'food_type', 'notes'],
+        required: ['name', 'category', 'cusine_type', 'food_type', 'notes'],
         additionalProperties: false,
       },
     },
@@ -80,7 +92,7 @@ const SCHEMA = {
   },
 } as const;
 
-export async function processPhotos(photos: MealPhoto[]): Promise<MealResponse> {
+export async function processMealPhotos(photos: MealPhoto[]): Promise<MealResponse> {
   const images = photos.map<OpenAI.Responses.ResponseInputImage>(photo => ({
     type: 'input_image',
     image_url: `data:image/jpeg;base64,${photo.image.toString('base64')}`,
@@ -89,16 +101,16 @@ export async function processPhotos(photos: MealPhoto[]): Promise<MealResponse> 
   const dates = photos.map(photo => photo.dateTaken.toString()).join('\n');
 
   const response = await client.responses.create({
-    model: 'gpt-4o-mini',
+    model: 'o1',
     text: {format: SCHEMA},
     input: [
       {
+        role: 'system',
+        content: [{type: 'input_text', text: PROMPT}],
+      },
+      {
         role: 'user',
-        content: [
-          {type: 'input_text', text: PROMPT},
-          {type: 'input_text', text: dates},
-          ...images,
-        ],
+        content: [{type: 'input_text', text: dates}, ...images],
       },
     ],
   });
