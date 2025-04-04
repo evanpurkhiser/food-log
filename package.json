@@ -1,0 +1,32 @@
+{
+  "name": "food-log",
+  "version": "1.0.0",
+  "scripts": {
+    "watch": "tsc --watch --preserveWatchOutput --pretty",
+    "dev": "cross-env NODE_ENV=development nodemon",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "build": "rimraf dist && tsc",
+    "start": "node dist/index.js"
+  },
+  "author": "Matschik <mathieu.schimmerling@protonmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@fastify/multipart": "^9.0.3",
+    "@prisma/client": "^6.5.0",
+    "@types/unzipper": "^0.10.11",
+    "fastify": "^5.2.2",
+    "openai": "^4.91.1",
+    "unzipper": "^0.12.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "cross-env": "^7.0.3",
+    "fastify-tsconfig": "^3.0.0",
+    "nodemon": "^3.1.9",
+    "prettier": "^3.5.2",
+    "prisma": "^6.5.0",
+    "rimraf": "^5.0.7",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.7.2"
+  }
+}
