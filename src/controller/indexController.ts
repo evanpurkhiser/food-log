@@ -41,6 +41,11 @@ async function indexController(fastify: FastifyInstance) {
     }
   }
 
+  fastify.get('/', async (_request, reply) => {
+    const totalMeals = await fastify.prisma.meal.count();
+    reply.code(200).send({totalMeals});
+  });
+
   fastify.post('/record', async (request, reply) => {
     const parts = request.parts();
 
