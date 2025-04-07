@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  output = "../generated/prisma"
+  output = "../src/prisma"
 }
 
 datasource db {
@@ -9,9 +9,9 @@ datasource db {
 }
 
 model Day {
-  id     Int       @id @default(autoincrement())
-  day    DateTime  @unique
-  meals  Meal[]
+  id        Int       @id @default(autoincrement())
+  datetime  DateTime  @unique
+  meals     Meal[]
 }
 
 model Meal {

@@ -1,7 +1,6 @@
 import app from './app';
 
-const FASTIFY_PORT = Number(process.env.FASTIFY_PORT) || 3006;
+const port = Number(process.env.MEAL_LOG_PORT) || 3006;
 
-app.listen({port: FASTIFY_PORT});
-
-console.log(`🚀  Fastify server running on port http://localhost:${FASTIFY_PORT}`);
+app.listen({port});
+console.log(`Meal Log server running on 127.0.0.1:${port}`);

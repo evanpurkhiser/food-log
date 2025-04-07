@@ -13,12 +13,18 @@ export interface MealResponse {
 }
 
 export interface MealInfo {
+  name: string;
   category: FoodCategory;
-  cusine_type: string[];
-  food_type: string[];
+  cusineType: string[];
+  foodType: string[];
+  notes: string;
+  photosIndexes: number[];
 }
 
 export interface MealPhoto {
-  dateTaken: Date;
+  /**
+   * The ISO8601 date provided by the iOS shortcut
+   */
+  dateTaken: string;
   image: Buffer;
 }

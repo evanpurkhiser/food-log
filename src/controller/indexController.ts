@@ -1,7 +1,10 @@
 import type {FastifyInstance} from 'fastify';
+
 import unzipper from 'unzipper';
 import {processMealPhotos} from '../prompt';
 import type {MealPhoto} from '../types';
+import sum from 'lodash/sum';
+import prettyBytes from 'pretty-bytes';
 
 async function indexController(fastify: FastifyInstance) {
   async function recordDay(photos: MealPhoto[]) {
@@ -10,21 +13,39 @@ async function indexController(fastify: FastifyInstance) {
       return;
     }
 
-    console.info(`Processing ${photos.length} photos`);
+    const totalSize = sum(photos.map(photo => photo.image.byteLength));
+    console.info(`Processing ${photos.length} photos (${prettyBytes(totalSize)})`);
 
-    // TOOD trim down to midnight
-    const day = photos[0].dateTaken;
+    const {meals} = await processMealPhotos(await Promise.all(photos));
 
-    const meals = await processMealPhotos(await Promise.all(photos));
+    const datetime = new Date(photos[0].dateTaken);
+    datetime.setHours(0, 0, 0, 0);
 
-    console.log(require('util').inspect(meals, {depth: null}));
+    const day = await fastify.prisma.day.upsert({
+      where: {datetime},
+      create: {datetime},
+      update: {},
+    });
+
+    for (const {photosIndexes, ...mealData} of meals) {
+      const mealPhotos = photosIndexes.map(idx => photos[idx]);
+      const dateRecorded = new Date(mealPhotos[0].dateTaken);
+
+      await fastify.prisma.meal.upsert({
+        where: {dateRecorded},
+        create: {dayId: day.id, dateRecorded, ...mealData},
+        update: {},
+      });
+
+      console.info('Logged meal...', mealData);
+    }
   }
 
   fastify.post('/record', async (request, reply) => {
     const parts = request.parts();
 
     let zipFile: Buffer | null = null;
-    let datesTaken: Date[] | null = null;
+    let datesTaken: string[] | null = null;
 
     for await (const part of parts) {
       if (part.type === 'file' && part.fieldname === 'images') {
@@ -32,7 +53,7 @@ async function indexController(fastify: FastifyInstance) {
       }
       if (part.type === 'field' && part.fieldname === 'datesTaken') {
         const value = part.value as string;
-        datesTaken = value.split('\n').map(date => new Date(date));
+        datesTaken = value.split('\n');
       }
     }
 
