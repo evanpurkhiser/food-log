@@ -6,15 +6,16 @@ import unzipper from 'unzipper';
 import {processMealPhotos} from '../prompt';
 import type {MealPhoto} from '../types';
 
-function indexController(fastify: FastifyInstance) {
+// eslint-disable-next-line require-await
+async function indexController(fastify: FastifyInstance) {
   async function recordDay(photos: MealPhoto[]) {
     if (photos.length === 0) {
-      console.warn('No photos recoreded for today...');
+      fastify.log.warn('No photos recoreded for today...');
       return;
     }
 
     const totalSize = sum(photos.map(photo => photo.image.byteLength));
-    console.info(`Processing ${photos.length} photos (${prettyBytes(totalSize)})`);
+    fastify.log.info(`Processing ${photos.length} photos (${prettyBytes(totalSize)})`);
 
     const {meals} = await processMealPhotos(await Promise.all(photos));
 
@@ -37,7 +38,7 @@ function indexController(fastify: FastifyInstance) {
         update: {},
       });
 
-      console.info('Logged meal...', mealData);
+      fastify.log.info('Logged meal...', mealData);
     }
   }
 
