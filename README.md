@@ -1,4 +1,4 @@
-# Food Log
+# Meal Log
 
 Small personal side project designed to work with iOS shortcuts that help
 easily track what I am eating.
