@@ -1,9 +1,7 @@
 import OpenAI from 'openai';
 import type {FoodCategory, MealInfo, MealPhoto, MealResponse} from './types';
 
-const client = new OpenAI({
-  apiKey: process.env['OPEN_AI_KEY'],
-});
+const client = new OpenAI({apiKey: process.env['OPENAI_TOKEN']});
 
 const PROMPT = `
 You are my personal meal cageorizeer and analyst. Your objective is to
