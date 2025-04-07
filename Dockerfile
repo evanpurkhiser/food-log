@@ -23,8 +23,8 @@ COPY tsconfig.json .
 RUN npx prisma generate --schema=prisma/schema.prisma
 RUN npm run build
 
-ENV MEAL_LOG_PORT 80
-EXPOSE 80
+ENV MEAL_LOG_PORT 8888
+EXPOSE 8888
 
 ENV DATABASE_URL file:/data/meal-log.db
 VOLUME /data
