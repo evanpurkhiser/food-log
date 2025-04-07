@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+
 import type {FoodCategory, MealInfo, MealPhoto, MealResponse} from './types';
 
 const client = new OpenAI({apiKey: process.env['OPENAI_TOKEN']});

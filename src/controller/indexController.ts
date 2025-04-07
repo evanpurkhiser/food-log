@@ -1,12 +1,12 @@
 import type {FastifyInstance} from 'fastify';
-
-import unzipper from 'unzipper';
-import {processMealPhotos} from '../prompt';
-import type {MealPhoto} from '../types';
 import sum from 'lodash/sum';
 import prettyBytes from 'pretty-bytes';
+import unzipper from 'unzipper';
 
-async function indexController(fastify: FastifyInstance) {
+import {processMealPhotos} from '../prompt';
+import type {MealPhoto} from '../types';
+
+function indexController(fastify: FastifyInstance) {
   async function recordDay(photos: MealPhoto[]) {
     if (photos.length === 0) {
       console.warn('No photos recoreded for today...');
@@ -74,7 +74,7 @@ async function indexController(fastify: FastifyInstance) {
 
     const {files} = await unzipper.Open.buffer(zipFile);
 
-    const photos: Promise<MealPhoto>[] = files.map(async (file, i) => {
+    const photos: Array<Promise<MealPhoto>> = files.map(async (file, i) => {
       const image = await file.buffer();
       const dateTaken = datesTaken?.[i];
 

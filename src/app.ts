@@ -1,7 +1,8 @@
 import multipart from '@fastify/multipart';
 import fastify from 'fastify';
-import router from './router';
+
 import {prismaPlugin} from './prisma-plugin';
+import router from './router';
 
 const server = fastify({
   // Logger only for production
