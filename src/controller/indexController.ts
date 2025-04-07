@@ -8,21 +8,23 @@ import type {MealPhoto} from '../types';
 
 // eslint-disable-next-line require-await
 async function indexController(fastify: FastifyInstance) {
+  const {prisma, log} = fastify;
+
   async function recordDay(photos: MealPhoto[]) {
     if (photos.length === 0) {
-      fastify.log.warn('No photos recoreded for today...');
+      log.warn('No photos recoreded for today...');
       return;
     }
 
     const totalSize = sum(photos.map(photo => photo.image.byteLength));
-    fastify.log.info(`Processing ${photos.length} photos (${prettyBytes(totalSize)})`);
+    log.info(`Processing ${photos.length} photos (${prettyBytes(totalSize)})`);
 
     const {meals} = await processMealPhotos(await Promise.all(photos));
 
     const datetime = new Date(photos[0].dateTaken);
     datetime.setHours(0, 0, 0, 0);
 
-    const day = await fastify.prisma.day.upsert({
+    const day = await prisma.day.upsert({
       where: {datetime},
       create: {datetime},
       update: {},
@@ -32,18 +34,18 @@ async function indexController(fastify: FastifyInstance) {
       const mealPhotos = photosIndexes.map(idx => photos[idx]);
       const dateRecorded = new Date(mealPhotos[0].dateTaken);
 
-      await fastify.prisma.meal.upsert({
+      await prisma.meal.upsert({
         where: {dateRecorded},
         create: {dayId: day.id, dateRecorded, ...mealData},
         update: {},
       });
 
-      fastify.log.info('Logged meal...', mealData);
+      log.info('Logged meal...', mealData);
     }
   }
 
   fastify.get('/', async (_request, reply) => {
-    const meals = await fastify.prisma.meal.findMany({orderBy: {dateRecorded: 'desc'}});
+    const meals = await prisma.meal.findMany({orderBy: {dateRecorded: 'desc'}});
     reply.code(200).send({meals});
   });
 
