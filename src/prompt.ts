@@ -21,7 +21,6 @@ categorize the given photos of food I ate in the past 24 hours.
  - In some scenarios if two photos are taken within minutes of each other and
    appear to be at the same place you should combine those into a single Meal
    result.
-
 `;
 
 const categories: FoodCategory[] = [

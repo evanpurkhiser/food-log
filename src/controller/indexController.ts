@@ -1,10 +1,26 @@
 import type {FastifyInstance} from 'fastify';
 import unzipper from 'unzipper';
-import {processPhotos} from '../prompt';
+import {processMealPhotos} from '../prompt';
 import type {MealPhoto} from '../types';
 
-export default async function indexController(fastify: FastifyInstance) {
-  fastify.post('/upload', async (request, reply) => {
+async function indexController(fastify: FastifyInstance) {
+  async function recordDay(photos: MealPhoto[]) {
+    if (photos.length === 0) {
+      console.warn('No photos recoreded for today...');
+      return;
+    }
+
+    console.info(`Processing ${photos.length} photos`);
+
+    // TOOD trim down to midnight
+    const day = photos[0].dateTaken;
+
+    const meals = await processMealPhotos(await Promise.all(photos));
+
+    console.log(require('util').inspect(meals, {depth: null}));
+  }
+
+  fastify.post('/record', async (request, reply) => {
     const parts = request.parts();
 
     let zipFile: Buffer | null = null;
@@ -39,8 +55,10 @@ export default async function indexController(fastify: FastifyInstance) {
       return {image, dateTaken};
     });
 
-    processPhotos(await Promise.all(photos));
+    recordDay(await Promise.all(photos));
 
     reply.code(200).send({photosToProcess: photos.length});
   });
 }
+
+export default indexController;
