@@ -26,7 +26,7 @@ async function indexController(fastify: FastifyInstance) {
       dateTaken,
     };
 
-    log.info('Stored meal photo', storedPhoto);
+    log.info(storedPhoto, 'Stored meal photo');
     return storedPhoto;
   }
 
@@ -46,7 +46,7 @@ async function indexController(fastify: FastifyInstance) {
       update: {},
     });
 
-    log.info('Stored meal', storedMeal);
+    log.info(storedMeal, 'Stored meal');
     return storedMeal;
   }
 
