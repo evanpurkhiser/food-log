@@ -24,7 +24,7 @@ async function boot() {
     .after();
 
   server.register(router);
-  server.listen({port: server.config.PORT});
+  server.listen({host: '0.0.0.0', port: server.config.PORT});
 }
 
 boot();
