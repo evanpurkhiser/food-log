@@ -17,9 +17,10 @@ categorize the given photos of food I ate in the past 24 hours.
    the type of food is typically lunch, if it's eaten at dinner time then
    categorize it as dinner.
 
- - In some scenarios if two photos are taken within minutes of each other and
-   appear to be at the same place you should combine those into a single Meal
-   result.
+ - In some scenarios if two photos are taken within a few minutes of each
+   other and IMPORTANTLY, appear to be at the same place, you should combine
+   those into a single Meal result. Use hints like the same table in the
+   photo, sane style of plates, etc.
 `;
 
 const categories: FoodCategory[] = [
