@@ -75,7 +75,10 @@ async function indexController(fastify: FastifyInstance) {
   }
 
   fastify.get('/', async (_request, reply) => {
-    const meals = await prisma.meal.findMany({orderBy: {dateRecorded: 'desc'}});
+    const meals = await prisma.meal.findMany({
+      orderBy: {dateRecorded: 'desc'},
+      include: {photos: true},
+    });
     reply.code(200).send({meals});
   });
 
