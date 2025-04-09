@@ -8,6 +8,18 @@ export type FoodCategory =
   | 'beverage'
   | 'late night';
 
+export type FoodGroup =
+  | 'Fruits'
+  | 'Vegetables'
+  | 'Grains'
+  | 'Protein'
+  | 'Dairy'
+  | 'Oils and Fats'
+  | 'Sweets and Added Sugars'
+  | 'Beverages'
+  | 'Legumes'
+  | 'Nuts and Seeds';
+
 export interface MealResponse {
   meals: MealInfo[];
 }
@@ -15,6 +27,7 @@ export interface MealResponse {
 export interface MealInfo {
   name: string;
   category: FoodCategory;
+  foodGroups: FoodGroup[];
   cusineType: string[];
   foodType: string[];
   notes: string;

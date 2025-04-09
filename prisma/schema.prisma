@@ -19,6 +19,7 @@ model Meal {
   dateRecorded  DateTime  @unique
   name          String
   category      String
+  foodGroups    Json
   cusineType    Json
   foodType      Json
   notes         String

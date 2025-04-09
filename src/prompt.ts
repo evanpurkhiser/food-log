@@ -33,6 +33,19 @@ const categories: FoodCategory[] = [
   'late night',
 ];
 
+const foodGroups: string[] = [
+  'Fruits',
+  'Vegetables',
+  'Grains',
+  'Protein',
+  'Dairy',
+  'Oils and Fats',
+  'Sweets and Added Sugars',
+  'Beverages',
+  'Legumes',
+  'Nuts and Seeds',
+];
+
 const MEAL_PROPERTIES = {
   name: {
     description: 'A name for the meal. Short and sweet',
@@ -43,6 +56,14 @@ const MEAL_PROPERTIES = {
       "The 'category' of the meal. Use the date of the photo to help you determine this along with the contents of the food.",
     type: 'string',
     enum: categories,
+  },
+  foodGroups: {
+    description: 'A list of the food groups the meal appears to belong to.',
+    type: 'array',
+    items: {
+      type: 'string',
+      enum: foodGroups,
+    },
   },
   cusineType: {
     description:
