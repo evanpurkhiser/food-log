@@ -1,12 +1,13 @@
 export type FoodCategory =
-  | 'breakfast'
-  | 'lunch'
-  | 'dinner'
-  | 'snack'
-  | 'brunch'
-  | 'dessert'
-  | 'beverage'
-  | 'late night';
+  | 'Breakfast'
+  | 'Lunch'
+  | 'Dinner'
+  | 'Snack'
+  | 'Brunch'
+  | 'Dessert'
+  | 'Beverage'
+  | 'Coffee'
+  | 'Late Night';
 
 export type FoodGroup =
   | 'Fruits'

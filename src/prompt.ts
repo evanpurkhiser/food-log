@@ -24,14 +24,15 @@ categorize the given photos of food I ate in the past 24 hours.
 `;
 
 const categories: FoodCategory[] = [
-  'breakfast',
-  'lunch',
-  'dinner',
-  'snack',
-  'brunch',
-  'dessert',
-  'beverage',
-  'late night',
+  'Breakfast',
+  'Lunch',
+  'Dinner',
+  'Snack',
+  'Brunch',
+  'Dessert',
+  'Beverage',
+  'Coffee',
+  'Late Night',
 ];
 
 const foodGroups: string[] = [
