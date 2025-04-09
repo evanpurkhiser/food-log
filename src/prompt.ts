@@ -2,8 +2,6 @@ import OpenAI from 'openai';
 
 import type {FoodCategory, MealInfo, MealPhoto, MealResponse} from './types';
 
-const client = new OpenAI({apiKey: process.env['OPENAI_TOKEN']});
-
 const PROMPT = `
 You are my personal meal cageorizeer and analyst. Your objective is to
 categorize the given photos of food I ate in the past 24 hours. 
@@ -94,7 +92,10 @@ const SCHEMA = {
   },
 } as const;
 
-export async function processMealPhotos(photos: MealPhoto[]): Promise<MealResponse> {
+export async function processMealPhotos(
+  client: OpenAI,
+  photos: MealPhoto[]
+): Promise<MealResponse> {
   const images = photos.map<OpenAI.Responses.ResponseInputImage>(photo => ({
     type: 'input_image',
     image_url: `data:image/jpeg;base64,${photo.image.toString('base64')}`,

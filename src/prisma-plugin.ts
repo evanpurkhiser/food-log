@@ -1,16 +1,14 @@
-import type {FastifyPluginAsync} from 'fastify';
 import fp from 'fastify-plugin';
 
 import {PrismaClient} from './prisma';
 
-// Use TypeScript module augmentation to declare the type of server.prisma to be PrismaClient
 declare module 'fastify' {
   interface FastifyInstance {
     prisma: PrismaClient;
   }
 }
 
-export const prismaPlugin: FastifyPluginAsync = fp(async (server, _options) => {
+export const prismaPlugin = fp(async server => {
   const prisma = new PrismaClient();
 
   await prisma.$connect();

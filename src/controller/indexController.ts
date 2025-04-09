@@ -8,7 +8,7 @@ import type {MealPhoto} from '../types';
 
 // eslint-disable-next-line require-await
 async function indexController(fastify: FastifyInstance) {
-  const {prisma, log} = fastify;
+  const {prisma, log, openai} = fastify;
 
   async function recordDay(photos: MealPhoto[]) {
     if (photos.length === 0) {
@@ -19,7 +19,7 @@ async function indexController(fastify: FastifyInstance) {
     const totalSize = sum(photos.map(photo => photo.image.byteLength));
     log.info(`Processing ${photos.length} photos (${prettyBytes(totalSize)})`);
 
-    const {meals} = await processMealPhotos(await Promise.all(photos));
+    const {meals} = await processMealPhotos(openai, photos);
 
     const datetime = new Date(photos[0].dateTaken);
     datetime.setHours(0, 0, 0, 0);
