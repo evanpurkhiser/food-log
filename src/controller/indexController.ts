@@ -1,6 +1,7 @@
-import type {FastifyInstance} from 'fastify';
+import type {FastifyInstance, FastifyRequest} from 'fastify';
 import sum from 'lodash/sum';
 import {randomUUID} from 'node:crypto';
+import fsSync from 'node:fs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import prettyBytes from 'pretty-bytes';
@@ -77,6 +78,27 @@ async function indexController(fastify: FastifyInstance) {
     const meals = await prisma.meal.findMany({orderBy: {dateRecorded: 'desc'}});
     reply.code(200).send({meals});
   });
+
+  fastify.get(
+    '/photo/:filename',
+    async (request: FastifyRequest<{Params: {filename: string}}>, reply) => {
+      const {filename} = request.params;
+      const photoPath = path.resolve(config.PHOTOS_PATH, filename.slice(0, 2), filename);
+
+      if (!photoPath.startsWith(config.PHOTOS_PATH)) {
+        return reply.status(404).send();
+      }
+
+      if (!fsSync.existsSync(photoPath)) {
+        return reply.status(404).send();
+      }
+
+      return reply
+        .status(200)
+        .type('image/jpeg')
+        .send(fsSync.createReadStream(photoPath));
+    }
+  );
 
   fastify.post('/record', async (request, reply) => {
     const parts = request.parts();
