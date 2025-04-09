@@ -18,7 +18,7 @@ async function indexController(fastify: FastifyInstance) {
   async function storePhoto({image, dateTaken}: MealPhoto) {
     const filename = `${randomUUID()}.jpg`;
     const dest = path.join(config.PHOTOS_PATH, filename.slice(0, 2));
-    await fs.mkdir(dest);
+    await fs.mkdir(dest, {recursive: true});
     await fs.writeFile(path.join(dest, filename), image);
 
     const storedPhoto: StoredPhoto = {
