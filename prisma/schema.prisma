@@ -24,4 +24,13 @@ model Meal {
   notes         String
   day           Day       @relation(fields: [dayId], references: [id])
   dayId         Int
+  photos        Photo[]
+}
+
+model Photo {
+  id            Int       @id @default(autoincrement())
+  filename      String    @unique
+  dateTaken     DateTime
+  meal          Meal      @relation(fields: [mealId], references: [id])
+  mealId        Int
 }

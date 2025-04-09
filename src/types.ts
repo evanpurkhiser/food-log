@@ -26,5 +26,19 @@ export interface MealPhoto {
    * The ISO8601 date provided by the iOS shortcut
    */
   dateTaken: string;
+  /**
+   * The binary data of the image
+   */
   image: Buffer;
+}
+
+export interface StoredPhoto {
+  /**
+   * The path to the stored photo
+   */
+  filename: string;
+  /**
+   * The ISO8601 date provided by the iOS shortcut
+   */
+  dateTaken: string;
 }

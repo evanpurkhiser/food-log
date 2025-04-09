@@ -1,14 +1,53 @@
 import type {FastifyInstance} from 'fastify';
 import sum from 'lodash/sum';
+import {randomUUID} from 'node:crypto';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import prettyBytes from 'pretty-bytes';
 import unzipper from 'unzipper';
 
+import {Day} from '../prisma';
 import {processMealPhotos} from '../prompt';
-import type {MealPhoto} from '../types';
+import type {MealInfo, MealPhoto, StoredPhoto} from '../types';
 
 // eslint-disable-next-line require-await
 async function indexController(fastify: FastifyInstance) {
-  const {prisma, log, openai} = fastify;
+  const {config, log, prisma, openai} = fastify;
+
+  async function storePhoto({image, dateTaken}: MealPhoto) {
+    const filename = `${randomUUID()}.jpg`;
+    const dest = path.join(config.PHOTOS_PATH, filename.slice(0, 2));
+    await fs.mkdir(dest);
+    await fs.writeFile(path.join(dest, filename), image);
+
+    const storedPhoto: StoredPhoto = {
+      filename,
+      dateTaken,
+    };
+
+    log.info('Stored meal photo', storedPhoto);
+    return storedPhoto;
+  }
+
+  async function storeMeal(meal: MealInfo, day: Day, photos: StoredPhoto[]) {
+    const {photosIndexes, ...mealData} = meal;
+    const mealPhotos = photosIndexes.map(idx => photos[idx]);
+    const dateRecorded = new Date(mealPhotos[0].dateTaken);
+
+    const storedMeal = await prisma.meal.upsert({
+      where: {dateRecorded},
+      create: {
+        ...mealData,
+        dayId: day.id,
+        dateRecorded,
+        photos: {createMany: {data: mealPhotos}},
+      },
+      update: {},
+    });
+
+    log.info('Stored meal', storedMeal);
+    return storedMeal;
+  }
 
   async function recordDay(photos: MealPhoto[]) {
     if (photos.length === 0) {
@@ -19,8 +58,6 @@ async function indexController(fastify: FastifyInstance) {
     const totalSize = sum(photos.map(photo => photo.image.byteLength));
     log.info(`Processing ${photos.length} photos (${prettyBytes(totalSize)})`);
 
-    const {meals} = await processMealPhotos(openai, photos);
-
     const datetime = new Date(photos[0].dateTaken);
     datetime.setHours(0, 0, 0, 0);
 
@@ -30,18 +67,10 @@ async function indexController(fastify: FastifyInstance) {
       update: {},
     });
 
-    for (const {photosIndexes, ...mealData} of meals) {
-      const mealPhotos = photosIndexes.map(idx => photos[idx]);
-      const dateRecorded = new Date(mealPhotos[0].dateTaken);
+    const {meals} = await processMealPhotos(openai, photos);
+    const storedPhotos = await Promise.all(photos.map(storePhoto));
 
-      await prisma.meal.upsert({
-        where: {dateRecorded},
-        create: {dayId: day.id, dateRecorded, ...mealData},
-        update: {},
-      });
-
-      log.info('Logged meal...', mealData);
-    }
+    await Promise.all(meals.map(meal => storeMeal(meal, day, storedPhotos)));
   }
 
   fastify.get('/', async (_request, reply) => {

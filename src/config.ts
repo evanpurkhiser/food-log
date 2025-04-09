@@ -5,17 +5,21 @@ import fp from 'fastify-plugin';
 interface EnvConfig {
   PORT: number;
   OPENAI_TOKEN: string;
+  PHOTOS_PATH: string;
 }
 
 const schema: JSONSchemaType<EnvConfig> = {
   type: 'object',
-  required: ['PORT', 'OPENAI_TOKEN'],
+  required: ['PORT', 'OPENAI_TOKEN', 'PHOTOS_PATH'],
   properties: {
     PORT: {
       type: 'number',
       default: 3006,
     },
     OPENAI_TOKEN: {
+      type: 'string',
+    },
+    PHOTOS_PATH: {
       type: 'string',
     },
   },
