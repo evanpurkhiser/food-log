@@ -127,7 +127,7 @@ export async function processMealPhotos(
   const dates = photos.map(photo => photo.dateTaken).join('\n');
 
   const response = await client.responses.create({
-    model: 'o1',
+    model: 'o4-mini',
     text: {format: SCHEMA},
     input: [
       {
