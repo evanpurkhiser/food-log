@@ -7,7 +7,7 @@ import prettyBytes from 'pretty-bytes';
 import unzipper from 'unzipper';
 
 import {Day} from '../prisma';
-import {processMealPhotos} from '../prompt';
+import {processMealPhotos} from '../prompt/mealInfo';
 import type {MealInfo, MealPhoto, StoredPhoto} from '../types';
 
 // eslint-disable-next-line require-await
