@@ -69,13 +69,13 @@ const MEAL_PROPERTIES = {
   },
   cusineType: {
     description:
-      "A list of the 'cuisine' of food in the photo, try and look close at the photo to determine this. Here are various examples: italian, mexican, japanese, chinese, indian, mediterranean, korean, thai, french, greek, american, vietnamese, middle eastern. You do not have to pick ONLY from this list. It should ALWAYS be all lowercase.",
+      "A list of the 'cuisine' of food in the photo, try and look close at the photo to determine this. Here are various examples: Italian, Mexican, Japanese, Chinese, Indian, Mediterranean, Korean, Thai, French, Greek, American, Vietnamese, Middle Eastern. You do not have to pick ONLY from this list.",
     type: 'array',
     items: {type: 'string'},
   },
   foodType: {
     description:
-      "A list of the 'type' of food in the photo, try and look close at the photo to determine this. Here are various examples: burrito, sandwich, pasta, soup, salad, omelet, pizza, boba, stir-fry, sushi, taco, noodles, curry, wrap, dumplings, ramen, pancakes, burger, toast, cereal, steak, bbq, smoothie, ice cream, cake. You do not have to pick ONLY from this list.",
+      "A list of the 'type' of food in the photo, try and look close at the photo to determine this. Here are various examples: Burrito, Sandwich, Pasta, Soup, Salad, Omelet, Pizza, Boba, Stir-fry, Sushi, Tacos, Noodles, Curry, Wrap, Dumplings, Ramen, Pancakes, Burger, Toast, Cereal, Steak, BBQ, Smoothie, Ice Cream, Cake. You do not have to pick ONLY from this list.",
     type: 'array',
     items: {type: 'string'},
   },
