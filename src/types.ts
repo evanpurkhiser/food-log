@@ -23,6 +23,8 @@ export type FoodGroup =
 
 export interface MealResponse {
   meals: MealInfo[];
+  healthScore: number;
+  healthSummary: string;
 }
 
 export interface MealInfo {

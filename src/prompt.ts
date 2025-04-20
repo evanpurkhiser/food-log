@@ -109,8 +109,17 @@ const SCHEMA = {
         type: 'array',
         items: {$ref: '#/$defs/Meal'},
       },
+      healthScore: {
+        type: 'number',
+        description:
+          'Given todays meals score the day on a scale of 0-10, 10 being a very balanced and healthy diet with well timed meals and 0 being highly unhealthy. This may be fractional',
+      },
+      healthSummary: {
+        type: 'string',
+        description: 'Summarize why you gave today the healh score given',
+      },
     },
-    required: ['meals'],
+    required: ['meals', 'healthScore', 'healthSummary'],
     additionalProperties: false,
   },
 } as const;

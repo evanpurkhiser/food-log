@@ -62,14 +62,20 @@ async function indexController(fastify: FastifyInstance) {
     const datetime = new Date(photos[0].dateTaken);
     datetime.setHours(0, 0, 0, 0);
 
+    const {meals, healthScore, healthSummary} = await processMealPhotos(openai, photos);
+    const storedPhotos = await Promise.all(photos.map(storePhoto));
+
     const day = await prisma.day.upsert({
       where: {datetime},
-      create: {datetime},
+      create: {
+        datetime,
+        healthSummary,
+        healthScore: healthScore.toString(),
+      },
       update: {},
     });
 
-    const {meals} = await processMealPhotos(openai, photos);
-    const storedPhotos = await Promise.all(photos.map(storePhoto));
+    log.info(day, 'Day created');
 
     await Promise.all(meals.map(meal => storeMeal(meal, day, storedPhotos)));
   }

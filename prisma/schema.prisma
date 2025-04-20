@@ -9,9 +9,11 @@ datasource db {
 }
 
 model Day {
-  id        Int       @id @default(autoincrement())
-  datetime  DateTime  @unique
-  meals     Meal[]
+  id             Int       @id @default(autoincrement())
+  datetime       DateTime  @unique
+  meals          Meal[]
+  healthScore    String    @default("")
+  healthSummary  String    @default("")
 }
 
 model Meal {
