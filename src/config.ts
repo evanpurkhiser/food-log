@@ -5,12 +5,20 @@ import fp from 'fastify-plugin';
 interface EnvConfig {
   PORT: number;
   OPENAI_TOKEN: string;
+  /**
+   * Path to store photos
+   */
   PHOTOS_PATH: string;
+  /**
+   * Token required to be present on the `/record` upload to accept a
+   * logged day of meals
+   */
+  RECORD_TOKEN: string;
 }
 
 const schema: JSONSchemaType<EnvConfig> = {
   type: 'object',
-  required: ['PORT', 'OPENAI_TOKEN', 'PHOTOS_PATH'],
+  required: ['PORT', 'OPENAI_TOKEN', 'PHOTOS_PATH', 'RECORD_TOKEN'],
   properties: {
     PORT: {
       type: 'number',
@@ -20,6 +28,9 @@ const schema: JSONSchemaType<EnvConfig> = {
       type: 'string',
     },
     PHOTOS_PATH: {
+      type: 'string',
+    },
+    RECORD_TOKEN: {
       type: 'string',
     },
   },

@@ -80,6 +80,11 @@ async function recordController(fastify: FastifyInstance) {
   }
 
   fastify.post('/record', async (request, reply) => {
+    if (request.headers.token !== config.RECORD_TOKEN) {
+      reply.code(400).send({error: 'Invalid Token provided'});
+      return;
+    }
+
     const parts = request.parts();
 
     let zipFile: Buffer | null = null;
