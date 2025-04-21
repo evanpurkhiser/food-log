@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 
-import type {FoodCategory, MealInfo, MealPhoto, MealResponse} from './types';
+import type {FoodCategory, MealInfo, MealPhoto, MealResponse} from '../types';
 
 const PROMPT = `
 You are my personal meal cageorizeer and analyst. Your objective is to
