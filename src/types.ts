@@ -34,6 +34,7 @@ export interface MealInfo {
   cusineType: string[];
   foodType: string[];
   notes: string;
+  illustrationPrompt: string;
   photosIndexes: number[];
 }
 

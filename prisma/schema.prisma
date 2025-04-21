@@ -17,17 +17,19 @@ model Day {
 }
 
 model Meal {
-  id           Int      @id @default(autoincrement())
-  dateRecorded DateTime @unique
-  name         String
-  category     String
-  foodGroups   Json
-  cusineType   Json
-  foodType     Json
-  notes        String
-  day          Day      @relation(fields: [dayId], references: [id])
-  dayId        Int
-  photos       Photo[]
+  id                 Int      @id @default(autoincrement())
+  dateRecorded       DateTime @unique
+  name               String
+  category           String
+  foodGroups         Json
+  cusineType         Json
+  foodType           Json
+  notes              String
+  day                Day      @relation(fields: [dayId], references: [id])
+  dayId              Int
+  photos             Photo[]
+  illustration       String?
+  illustrationPrompt String?
 }
 
 model Photo {

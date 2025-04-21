@@ -4,9 +4,11 @@ import {randomUUID} from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import prettyBytes from 'pretty-bytes';
+import sharp from 'sharp';
 import unzipper from 'unzipper';
 
 import {Day} from '../prisma';
+import {generateMealIllustration} from '../prompt/illustration';
 import {processMealPhotos} from '../prompt/mealInfo';
 import type {MealInfo, MealPhoto, StoredPhoto} from '../types';
 
@@ -16,7 +18,7 @@ async function recordController(fastify: FastifyInstance) {
 
   async function storePhoto({image, dateTaken}: MealPhoto) {
     const filename = `${randomUUID()}.jpg`;
-    const dest = path.join(config.PHOTOS_PATH, filename.slice(0, 2));
+    const dest = path.join(config.DATA_PATH, 'photos', filename.slice(0, 2));
     await fs.mkdir(dest, {recursive: true});
     await fs.writeFile(path.join(dest, filename), image);
 
@@ -29,10 +31,30 @@ async function recordController(fastify: FastifyInstance) {
     return storedPhoto;
   }
 
+  async function makeIllustration(prompt: string) {
+    const image = await generateMealIllustration(openai, prompt);
+
+    if (image === null) {
+      return null;
+    }
+
+    const uuid = randomUUID();
+    const dest = path.join(config.DATA_PATH, 'illustrations', uuid.slice(0, 2));
+    await fs.mkdir(dest, {recursive: true});
+
+    const sharpImage = sharp(await image.bytes());
+    await sharpImage.toFile(path.join(dest, `${uuid}.png`));
+    await sharpImage.resize(256).toFile(path.join(dest, `${uuid}-sm.png`));
+
+    return uuid;
+  }
+
   async function storeMeal(meal: MealInfo, day: Day, photos: StoredPhoto[]) {
-    const {photosIndexes, ...mealData} = meal;
+    const {photosIndexes, illustrationPrompt, ...mealData} = meal;
     const mealPhotos = photosIndexes.map(idx => photos[idx]);
     const dateRecorded = new Date(mealPhotos[0].dateTaken);
+
+    const illustration = await makeIllustration(illustrationPrompt);
 
     const storedMeal = await prisma.meal.upsert({
       where: {dateRecorded},
@@ -41,6 +63,8 @@ async function recordController(fastify: FastifyInstance) {
         dayId: day.id,
         dateRecorded,
         photos: {createMany: {data: mealPhotos}},
+        illustrationPrompt,
+        illustration,
       },
       update: {},
     });

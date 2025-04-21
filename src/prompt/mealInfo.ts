@@ -83,6 +83,11 @@ const MEAL_PROPERTIES = {
     description: 'A descriptive summary of the meal',
     type: 'string',
   },
+  illustrationPrompt: {
+    description:
+      'A detailed, presentation-focused description of the food only. Do NOT describe any background elements, scenery, hands, people, tables, how the food is held etc. Focus solely on the contents of the dish or drink. Do not mention if it is half-eaten. Do not include any mention of illustration styles, materials, or artistic interpretation. This description will be used to generate an image of the food only.',
+    type: 'string',
+  },
   photosIndexes: {
     description:
       'A list of the zero based index of the photos that contributed to this meal',

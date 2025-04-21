@@ -6,9 +6,9 @@ interface EnvConfig {
   PORT: number;
   OPENAI_TOKEN: string;
   /**
-   * Path to store photos
+   * Location where photos and illustrations will be stored
    */
-  PHOTOS_PATH: string;
+  DATA_PATH: string;
   /**
    * Token required to be present on the `/record` upload to accept a
    * logged day of meals
@@ -18,7 +18,7 @@ interface EnvConfig {
 
 const schema: JSONSchemaType<EnvConfig> = {
   type: 'object',
-  required: ['PORT', 'OPENAI_TOKEN', 'PHOTOS_PATH', 'RECORD_TOKEN'],
+  required: ['PORT', 'OPENAI_TOKEN', 'DATA_PATH', 'RECORD_TOKEN'],
   properties: {
     PORT: {
       type: 'number',
@@ -27,7 +27,7 @@ const schema: JSONSchemaType<EnvConfig> = {
     OPENAI_TOKEN: {
       type: 'string',
     },
-    PHOTOS_PATH: {
+    DATA_PATH: {
       type: 'string',
     },
     RECORD_TOKEN: {

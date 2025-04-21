@@ -10,9 +10,10 @@ async function photosController(fastify: FastifyInstance) {
     '/photo/:filename',
     async (request: FastifyRequest<{Params: {filename: string}}>, reply) => {
       const {filename} = request.params;
-      const photoPath = path.resolve(config.PHOTOS_PATH, filename.slice(0, 2), filename);
+      const photosDir = path.join(config.DATA_PATH, 'photos');
+      const photoPath = path.resolve(photosDir, filename.slice(0, 2), filename);
 
-      if (!photoPath.startsWith(config.PHOTOS_PATH)) {
+      if (!photoPath.startsWith(photosDir)) {
         return reply.status(404).send();
       }
 
