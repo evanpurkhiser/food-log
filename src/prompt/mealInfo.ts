@@ -85,7 +85,7 @@ const MEAL_PROPERTIES = {
   },
   illustrationPrompt: {
     description:
-      'A detailed, presentation-focused description of the food only. Do NOT describe any background elements, scenery, hands, people, tables, how the food is held etc. Focus solely on the contents of the dish or drink. Do not mention if it is half-eaten. Do not include any mention of illustration styles, materials, or artistic interpretation. This description will be used to generate an image of the food only.',
+      'A detailed, presentation-focused description of the food only. Absolutely does NOT describe any background elements, scenery, hands, people, tables, how the food is held etc. Focuses solely on the contents of the dish or drink. Does not mention if it is half-eaten. Does not include any mention of illustration styles, materials, or artistic interpretation. This description will be used to generate an image of the food only.',
     type: 'string',
   },
   photosIndexes: {
