@@ -27,6 +27,32 @@ async function photosController(fastify: FastifyInstance) {
         .send(fsSync.createReadStream(photoPath));
     }
   );
+
+  fastify.get(
+    '/illustration/:filename',
+    async (request: FastifyRequest<{Params: {filename: string}}>, reply) => {
+      const {filename} = request.params;
+      const illustrationsDir = path.join(config.DATA_PATH, 'illustrations');
+      const illustrationPath = path.resolve(
+        illustrationsDir,
+        filename.slice(0, 2),
+        filename
+      );
+
+      if (!illustrationPath.startsWith(illustrationsDir)) {
+        return reply.status(404).send();
+      }
+
+      if (!fsSync.existsSync(illustrationPath)) {
+        return reply.status(404).send();
+      }
+
+      return reply
+        .status(200)
+        .type('image/jpeg')
+        .send(fsSync.createReadStream(illustrationPath));
+    }
+  );
 }
 
 export default photosController;
