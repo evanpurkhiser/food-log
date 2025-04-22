@@ -145,7 +145,7 @@ async function recordController(fastify: FastifyInstance) {
 
     recordDay(await Promise.all(photos));
 
-    reply.code(200).send({photosToProcess: photos.length});
+    reply.code(200).send({success: true, photosToProcess: photos.length});
   });
 }
 
