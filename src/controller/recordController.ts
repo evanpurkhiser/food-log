@@ -100,7 +100,11 @@ async function recordController(fastify: FastifyInstance) {
 
     log.info(day, 'Day created');
 
-    await Promise.all(meals.map(meal => storeMeal(meal, day, storedPhotos)));
+    // Do not request all illustrations at once
+    for (const meal of meals) {
+      await storeMeal(meal, day, storedPhotos);
+      await new Promise(resolve => setTimeout(resolve, 15 * 1000));
+    }
   }
 
   fastify.post('/record', async (request, reply) => {
