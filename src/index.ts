@@ -1,6 +1,7 @@
 import multipart from '@fastify/multipart';
 import {program} from 'commander';
-import fastify from 'fastify';
+import fastify, {FastifyLoggerOptions} from 'fastify';
+import {PinoLoggerOptions} from 'fastify/types/logger';
 
 import {configPlugin} from './config';
 import {openaiPlugin} from './openai-plugin';
@@ -8,10 +9,27 @@ import {prismaPlugin} from './prisma-plugin';
 import router from './router';
 
 async function boot() {
-  const server = fastify({
-    // Logger only for production
-    logger: !!(process.env.NODE_ENV !== 'development'),
-  });
+  const env = process.env.NODE_ENV ?? 'production';
+
+  const loggingConfig: Record<
+    string,
+    boolean | FastifyLoggerOptions | PinoLoggerOptions
+  > = {
+    development: {
+      transport: {
+        target: 'pino-pretty',
+        options: {
+          translateTime: 'HH:MM:ss Z',
+          ignore: 'pid,hostname',
+        },
+      },
+    },
+    production: true,
+    test: false,
+  };
+  const logger = loggingConfig[env];
+
+  const server = fastify({logger});
 
   await server.register(configPlugin).after();
   await server
