@@ -1,4 +1,5 @@
 import multipart from '@fastify/multipart';
+import {program} from 'commander';
 import fastify from 'fastify';
 
 import {configPlugin} from './config';
@@ -24,7 +25,15 @@ async function boot() {
     .after();
 
   server.register(router);
-  server.listen({host: '0.0.0.0', port: server.config.PORT});
+
+  program
+    .command('server')
+    .description('Start the meal-log server')
+    .action(async () => {
+      await server.listen({host: '0.0.0.0', port: server.config.PORT});
+    });
+
+  await program.parseAsync();
 }
 
 boot();
