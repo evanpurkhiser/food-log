@@ -3,6 +3,7 @@ import {program} from 'commander';
 import fastify, {FastifyLoggerOptions} from 'fastify';
 import {PinoLoggerOptions} from 'fastify/types/logger';
 
+import {backfill} from './backfill';
 import {configPlugin} from './config';
 import {openaiPlugin} from './openai-plugin';
 import {prismaPlugin} from './prisma-plugin';
@@ -50,6 +51,11 @@ async function boot() {
     .action(async () => {
       await server.listen({host: '0.0.0.0', port: server.config.PORT});
     });
+
+  program
+    .command('backfill')
+    .description('Run backfill on missing data')
+    .action(async () => backfill(server));
 
   await program.parseAsync();
 }
