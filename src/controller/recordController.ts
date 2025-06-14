@@ -1,8 +1,7 @@
+import {PutObjectCommand} from '@aws-sdk/client-s3';
 import type {FastifyInstance} from 'fastify';
 import sum from 'lodash/sum';
 import {randomUUID} from 'node:crypto';
-import fs from 'node:fs/promises';
-import path from 'node:path';
 import prettyBytes from 'pretty-bytes';
 import sharp from 'sharp';
 import unzipper from 'unzipper';
@@ -14,13 +13,25 @@ import type {MealInfo, MealPhoto, StoredPhoto} from '../types';
 
 // eslint-disable-next-line require-await
 async function recordController(fastify: FastifyInstance) {
-  const {config, log, prisma, openai} = fastify;
+  const {config, log, prisma, openai, r2} = fastify;
+
+  function uploadImage(key: string, data: Buffer, mimeType: string) {
+    const command = new PutObjectCommand({
+      Bucket: config.R2_BUCKET_NAME,
+      Key: key,
+      Body: data,
+      ContentType: mimeType,
+    });
+
+    return r2.send(command);
+  }
 
   async function storePhoto({image, dateTaken}: MealPhoto) {
     const filename = `${randomUUID()}.jpg`;
-    const dest = path.join(config.DATA_PATH, 'photos', filename.slice(0, 2));
-    await fs.mkdir(dest, {recursive: true});
-    await fs.writeFile(path.join(dest, filename), image);
+    const prefix = filename.slice(0, 2);
+    const key = `photos/${prefix}/${filename}`;
+
+    await uploadImage(key, image, 'image/jpeg');
 
     const storedPhoto: StoredPhoto = {
       filename,
@@ -39,12 +50,12 @@ async function recordController(fastify: FastifyInstance) {
     }
 
     const uuid = randomUUID();
-    const dest = path.join(config.DATA_PATH, 'illustrations', uuid.slice(0, 2));
-    await fs.mkdir(dest, {recursive: true});
+    const prefix = uuid.slice(0, 2);
+    const imageBytes = Buffer.from(await image.bytes());
+    const sharpImage = sharp(imageBytes);
 
-    const sharpImage = sharp(await image.bytes());
-    await sharpImage.toFile(path.join(dest, `${uuid}.png`));
-    await sharpImage.resize(256).toFile(path.join(dest, `${uuid}-sm.png`));
+    const fullSize = await sharpImage.clone().toBuffer();
+    await uploadImage(`illustrations/${prefix}/${uuid}.png`, fullSize, 'image/png');
 
     return uuid;
   }

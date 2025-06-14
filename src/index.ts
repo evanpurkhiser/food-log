@@ -8,6 +8,7 @@ import {configPlugin} from './config';
 import {openaiPlugin} from './openai-plugin';
 import {prismaPlugin} from './prisma-plugin';
 import router from './router';
+import {r2Plugin} from './r2-plugin';
 
 async function boot() {
   const env = process.env.NODE_ENV ?? 'production';
@@ -41,6 +42,7 @@ async function boot() {
     })
     .register(prismaPlugin)
     .register(openaiPlugin)
+    .register(r2Plugin)
     .after();
 
   server.register(router);
