@@ -13,15 +13,16 @@ ENV PATH $VOLTA_HOME/bin:$PATH
 RUN curl https://get.volta.sh | bash
 RUN volta fetch node@22.14.0
 RUN volta install node@22.14.0
+RUN volta install pnpm@10.12.4
 
-COPY package.json package-lock.json /app/
-RUN npm clean-install
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml /app/
+RUN pnpm install
 
 COPY prisma/ ./prisma/
 COPY src/ ./src/
 COPY tsconfig.json .
 RUN npx prisma generate --schema=prisma/schema.prisma
-RUN npm run build
+RUN pnpm run build
 
 ENV PORT 8888
 EXPOSE 8888
